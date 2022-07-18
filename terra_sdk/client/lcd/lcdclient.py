@@ -66,9 +66,14 @@ class AsyncLCDClient:
         self.url = url
         self.last_request_height = None
 
-        default_price, default_adjustment = get_default(chain_id)
-        self.gas_prices = Coins(gas_prices) if gas_prices else default_price
-        self.gas_adjustment = gas_adjustment if gas_adjustment else default_adjustment
+        try:
+            default_price, default_adjustment = get_default(chain_id)
+        except ValueError as e:
+            try:
+                self.gas_prices = Coins(gas_prices) if gas_prices else default_price
+                self.gas_adjustment = gas_adjustment if gas_adjustment else default_adjustment
+            except NameError:
+                raise e from e
 
         self.auth = AsyncAuthAPI(self)
         self.bank = AsyncBankAPI(self)
