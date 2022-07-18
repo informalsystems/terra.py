@@ -5,9 +5,10 @@ from mnemonic import Mnemonic
 
 from .raw import RawKey
 
-__all__ = ["MnemonicKey", "LUNA_COIN_TYPE"]
+__all__ = ["MnemonicKey", "LUNA_COIN_TYPE", "LUNA_PREFIX"]
 
 LUNA_COIN_TYPE = 330
+LUNA_PREFIX = "terra"
 
 
 class MnemonicKey(RawKey):
@@ -53,6 +54,7 @@ class MnemonicKey(RawKey):
         account: int = 0,
         index: int = 0,
         coin_type: int = LUNA_COIN_TYPE,
+        prefix: str = LUNA_PREFIX,
     ):
         if mnemonic is None:
             mnemonic = Mnemonic("english").generate(256)
@@ -67,7 +69,7 @@ class MnemonicKey(RawKey):
             .ChildKey(index)
         )
 
-        super().__init__(child.PrivateKey())
+        super().__init__(child.PrivateKey(), prefix)
         self.mnemonic = mnemonic
         self.coin_type = coin_type
         self.account = account

@@ -40,9 +40,9 @@ class RawKey(Key):
         """
         return cls(bytes.fromhex(private_key_hex))
 
-    def __init__(self, private_key: bytes):
+    def __init__(self, private_key: bytes, prefix: str):
         public_key = compute_public_key(private_key)
-        super().__init__(public_key)
+        super().__init__(public_key, prefix)
         self.private_key = private_key
 
     def sign(self, payload: bytes) -> bytes:

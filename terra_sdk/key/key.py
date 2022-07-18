@@ -55,8 +55,12 @@ class Key:
     pubkeys.
     """
 
-    def __init__(self, public_key: Optional[PublicKey] = None):
+    def __init__(self, public_key: Optional[PublicKey] = None, prefix: Optional[str] = None):
         self.public_key = public_key
+        self.prefix = prefix
+        self.prefixval = f"{self.prefix}valoper"
+        self.prefixpub = f"{self.prefix}pub"
+        self.prefixvalpub = f"{self.prefix}valoperpub"
         if public_key:
             self.raw_address = address_from_public_key(public_key)
             self.raw_pubkey = amino_pubkey_from_public_key(public_key)
@@ -88,7 +92,7 @@ class Key:
         """
         if not self.raw_address:
             raise ValueError("could not compute acc_address: missing raw_address")
-        return AccAddress(get_bech("terra", self.raw_address.hex()))
+        return AccAddress(get_bech(self.prefix, self.raw_address.hex()))
 
     @property
     def val_address(self) -> ValAddress:
@@ -102,7 +106,7 @@ class Key:
         """
         if not self.raw_address:
             raise ValueError("could not compute val_address: missing raw_address")
-        return ValAddress(get_bech("terravaloper", self.raw_address.hex()))
+        return ValAddress(get_bech(self.prefixval, self.raw_address.hex()))
 
     @property
     def acc_pubkey(self) -> AccPubKey:
@@ -116,7 +120,7 @@ class Key:
         """
         if not self.raw_pubkey:
             raise ValueError("could not compute acc_pubkey: missing raw_pubkey")
-        return AccPubKey(get_bech("terrapub", self.raw_pubkey.hex()))
+        return AccPubKey(get_bech(self.prefixpub, self.raw_pubkey.hex()))
 
     @property
     def val_pubkey(self) -> ValPubKey:
@@ -130,7 +134,7 @@ class Key:
         """
         if not self.raw_pubkey:
             raise ValueError("could not compute val_pubkey: missing raw_pubkey")
-        return ValPubKey(get_bech("terravaloperpub", self.raw_pubkey.hex()))
+        return ValPubKey(get_bech(self.prefixvalpub, self.raw_pubkey.hex()))
 
     def create_signature_amino(self, sign_doc: SignDoc) -> SignatureV2:
         if self.public_key is None:
